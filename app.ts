@@ -37,10 +37,10 @@ class Product implements Printable, Friable, Boilable, Steamable {
     icon: string
     state: ProductState
 
-    constructor(name:string, icon:string) {
+    constructor(name:string, icon:string, state = ProductState.good) {
         this.name = name
         this.icon = icon
-        this.state = ProductState.good
+        this.state = state
     }
 
     public toString = () => {
@@ -67,7 +67,7 @@ class Product implements Printable, Friable, Boilable, Steamable {
 
 class NoProduct extends Product {
     constructor() {
-        super('нет', '🚫')
+        super('нет', '🚫', ProductState.used)
     }
 }
 const noProduct = new NoProduct()
@@ -149,6 +149,9 @@ class TheStorage implements Printable {
     }
 
     public add(product: Product) {
+        if (product.state === ProductState.used) {
+            return   
+        }
         if (this.items.length < this.capacity) {
             this.items.push(product)
         }
@@ -217,15 +220,15 @@ class Freezer extends TheStorage {
 
 class Stove {
     fry(obj:Product) {
-        return obj.fry()
+        return obj.state == ProductState.used ? obj : obj.fry()
     }
 
     boil(obj:Product) {
-        return obj.boil()
+        return obj.state == ProductState.used ? obj : obj.boil()
     }
 
     steam(obj:Product) {
-        return obj.steam()
+        return obj.state == ProductState.used ? obj : obj.steam()
     }
 }
 
@@ -267,6 +270,9 @@ function mix(receipts:ReceiptsCollection, input: Product[]): Product {
         }
 
         if (matchCount == r.constituents.length) {
+            for (let p of input) {
+                p.state = ProductState.used
+            }
             return new r.result()
         }
     }
@@ -299,7 +305,10 @@ print(egg)
 
 refrigerator.addToFreezer(chicken)
 
-print(refrigerator)
-
 print(mix(bookOfReceipts, [chicken, bread]))
-//print(mix(bookOfReceipts, [apple, bread]))
+print(mix(bookOfReceipts, [apple, bread]))
+
+print(refrigerator)
+refrigerator.add(bread)
+print(bread)
+print(refrigerator)
