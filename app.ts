@@ -18,7 +18,7 @@ function print(obj:Printable | string | null) {
 
 /*--- Product ---*/
 
-enum ProductState { good = 'хороший', bad = 'испорченный', fried = 'жареный', boiled = 'варёный', steamed = 'тушёный' };
+enum ProductState { good = 'хороший', bad = 'испорченный', used = '-', fried = 'жареный', boiled = 'варёный', steamed = 'тушёный' };
 
 interface Friable {
     fry(): void
@@ -223,9 +223,44 @@ class Stove {
     }
 }
 
+/*--- Receipts ---*/
+
+type ReceiptsCollection = {
+    [key:string]: Array<[string, ProductState]>
+}
+
+const bookOfReceipts: ReceiptsCollection = {
+    'бутерброд': [['хлеб', ProductState.good], ['кура', ProductState.fried]]
+}
+
+function mix(receipts:ReceiptsCollection, input: Product[]): any {
+    for (let k in receipts) {
+        const r = receipts[k]
+        let matchCount = 0
+        for (let a of r) {
+            let found = false
+            for (let b of input) {
+                if (b.name == a[0] && b.state == a[1]) {
+                    found = true
+                    break
+                }
+            }
+            if (found) {
+                matchCount += 1
+            }
+        }
+
+        if (matchCount == r.length) {
+            return r
+        }
+    }
+    return null
+}
+
 /*--- Action ---*/
 
 let chicken = new Chicken()
+let bread = new Bread()
 let apple = new Apple()
 let egg = new Egg()
 let refrigerator = new Refrigerator(10, 2)
@@ -249,3 +284,6 @@ print(egg)
 refrigerator.addToFreezer(chicken)
 
 print(refrigerator)
+
+print(mix(bookOfReceipts, [chicken, bread]))
+//print(mix(bookOfReceipts, [apple, bread]))
