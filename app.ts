@@ -2,19 +2,31 @@ interface Printable {
     toString(): string
 }
 
+interface Product extends Printable {
+
+}
+
 function print(obj:Printable) {
     console.log(obj.toString())
 }
 
-class Apple {
+class Apple implements Product {
     public toString = () => {
-        return `🍎`;
+        return `🍎`
     }
 }
 
-class Chicken {
+class Chicken implements Product {
     public toString = () => {
-        return `🍎`;
+        return `🍎`
+    }
+}
+
+class Refrigerator {
+    items: Product[]
+
+    constructor() {
+        this.items = []
     }
 }
 
