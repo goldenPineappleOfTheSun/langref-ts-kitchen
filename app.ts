@@ -131,6 +131,12 @@ class Omelete extends Product {
     }
 }
 
+class Sandwich extends Product {
+    constructor() {
+        super('бутерброд', '🥪')
+    }
+}
+
 /*--- Storage ---*/
 
 class TheStorage implements Printable {
@@ -226,18 +232,28 @@ class Stove {
 /*--- Receipts ---*/
 
 type ReceiptsCollection = {
-    [key:string]: Array<[string, ProductState]>
+    [key:string]: Receipt
+}
+
+class Receipt {
+    constituents: Array<[string, ProductState]>
+    result: { new(): Product }
+
+    constructor(parts: Array<[string, ProductState]>, result:{ new(): Product }) {
+        this.constituents = parts
+        this.result = result
+    }
 }
 
 const bookOfReceipts: ReceiptsCollection = {
-    'бутерброд': [['хлеб', ProductState.good], ['кура', ProductState.fried]]
+    'бутерброд': new Receipt([['хлеб', ProductState.good], ['кура', ProductState.fried]], Sandwich)
 }
 
-function mix(receipts:ReceiptsCollection, input: Product[]): any {
+function mix(receipts:ReceiptsCollection, input: Product[]): Product {
     for (let k in receipts) {
         const r = receipts[k]
         let matchCount = 0
-        for (let a of r) {
+        for (let a of r.constituents) {
             let found = false
             for (let b of input) {
                 if (b.name == a[0] && b.state == a[1]) {
@@ -250,11 +266,11 @@ function mix(receipts:ReceiptsCollection, input: Product[]): any {
             }
         }
 
-        if (matchCount == r.length) {
-            return r
+        if (matchCount == r.constituents.length) {
+            return new r.result()
         }
     }
-    return null
+    return noProduct
 }
 
 /*--- Action ---*/
