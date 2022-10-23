@@ -43,17 +43,17 @@ class Product implements Printable, Friable, Boilable, Steamable {
         return `${this.icon}:${this.name}:${this.state}`
     }
 
-    fry() {
+    fry(): Product {
         this.state = 'испорченный'
         return this
     }
 
-    boil() {
+    boil(): Product {
         this.state = 'испорченный'
         return this
     }
 
-    steam() {
+    steam(): Product {
         this.state = 'испорченный'
         return this
     }
@@ -90,6 +90,27 @@ class Chicken extends Product {
     steam() {
         this.state = 'тушёный'
         return this
+    }
+}
+
+class Egg extends Product {
+    constructor() {
+        super('яйцо', '🥚')
+    }
+
+    fry() {
+        return new Omelete()
+    }
+
+    boil() {
+        this.state = 'варёный'
+        return this
+    }
+}
+
+class Omelete extends Product {
+    constructor() {
+        super('яишница', '🍳')
     }
 }
 
@@ -183,6 +204,7 @@ class Stove {
 
 let chicken = new Chicken()
 let apple = new Apple()
+let egg = new Egg()
 let refrigerator = new Refrigerator(10, 2)
 let stove = new Stove()
 
@@ -192,12 +214,14 @@ refrigerator.add(apple)
 print(refrigerator)
 
 chicken = stove.fry(refrigerator.pull('кура'))
+egg = stove.fry(egg)
 
 print(refrigerator.peek('яблоко'))
 print(refrigerator.peek('тыква'))
 print(refrigerator.peek('кура'))
 
 print(chicken)
+print(egg)
 
 refrigerator.addToFreezer(chicken)
 
