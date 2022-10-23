@@ -47,7 +47,7 @@ class Chicken implements Product {
     }
 }
 
-class Refrigerator {
+class TheStorage {
     items: Product[]
     capacity: number
 
@@ -67,12 +67,39 @@ class Refrigerator {
     }
 }
 
+class Refrigerator extends TheStorage {
+    freezer: Freezer
+    
+    constructor(capacity:number, freezerCapacity:number) {
+        super(capacity)
+        this.freezer = new Freezer(freezerCapacity)
+    }
+
+    addToFreezer(product:Product) {
+        this.freezer.add(product)
+    }
+
+    pull(name:string) {
+        let normal = super.pull(name)
+        return normal != noProduct ? normal : this.freezer.pull(name)
+    }
+}
+
+class Shelves extends TheStorage {
+    
+}
+
+class Freezer extends TheStorage {
+    
+}
+
 let chicken = new Chicken()
 let apple = new Apple()
-let refrigerator = new Refrigerator(10)
+let refrigerator = new Refrigerator(10, 2)
 
-refrigerator.add(chicken)
+refrigerator.addToFreezer(chicken)
 refrigerator.add(apple)
 
 print(refrigerator.pull('яблоко'))
 print(refrigerator.pull('тыква'))
+print(refrigerator.pull('кура'))
