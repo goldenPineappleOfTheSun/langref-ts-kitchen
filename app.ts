@@ -2,48 +2,40 @@ interface Printable {
     toString(): string
 }
 
-interface Product extends Printable {
+class Product implements Printable {
     name: string
+    icon: string
+
+    constructor(name:string, icon:string) {
+        this.name = name
+        this.icon = icon
+    }
+
+    public toString = () => {
+        return `${this.icon}:${this.name}:хороший`
+    }
 }
 
 function print(obj:Printable) {
     console.log(obj.toString())
 }
 
-class NoProduct implements Product {
-    name: string
-
+class NoProduct extends Product {
     constructor() {
-        this.name = 'нет'
-    }
-
-    public toString = () => {
-        return `🚫`
+        super('нет', '🚫')
     }
 }
 const noProduct = new NoProduct()
 
-class Apple implements Product {
-    name: string
-
+class Apple extends Product {
     constructor() {
-        this.name = 'яблоко'
-    }
-
-    public toString = () => {
-        return `🍎`
+        super('яблоко', '🍎')
     }
 }
 
-class Chicken implements Product {
-    name: string
-
+class Chicken extends Product {
     constructor() {
-        this.name = 'кура'
-    }
-
-    public toString = () => {
-        return `🍗`
+        super('кура', '🍗')
     }
 }
 
