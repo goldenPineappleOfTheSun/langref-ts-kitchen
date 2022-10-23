@@ -8,6 +8,18 @@ function isPrintable(obj: any): obj is Printable {
     return obj === null || typeof obj === 'string' ? false : 'toString' in obj
 }
 
+function toString(obj:Printable | string | null) {
+    return isPrintable(obj) ? obj.toString() : obj
+}
+
+function print(obj:Printable | string | null) {
+    console.log(toString(obj))
+}
+
+/*--- Product ---*/
+
+enum ProductState { good = 'хороший', bad = 'испорченный', fried = 'жареный', boiled = 'варёный', steamed = 'тушёный' };
+
 interface Friable {
     fry(): void
 }
@@ -20,23 +32,15 @@ interface Steamable {
     steam(): void
 }
 
-function toString(obj:Printable | string | null) {
-    return isPrintable(obj) ? obj.toString() : obj
-}
-
-function print(obj:Printable | string | null) {
-    console.log(toString(obj))
-}
-
 class Product implements Printable, Friable, Boilable, Steamable {
     name: string
     icon: string
-    state: string
+    state: ProductState
 
     constructor(name:string, icon:string) {
         this.name = name
         this.icon = icon
-        this.state = 'хороший'
+        this.state = ProductState.good
     }
 
     public toString = () => {
@@ -44,20 +48,22 @@ class Product implements Printable, Friable, Boilable, Steamable {
     }
 
     fry(): Product {
-        this.state = 'испорченный'
+        this.state = ProductState.bad
         return this
     }
 
     boil(): Product {
-        this.state = 'испорченный'
+        this.state = ProductState.bad
         return this
     }
 
     steam(): Product {
-        this.state = 'испорченный'
+        this.state = ProductState.bad
         return this
     }
 }
+
+/*--- Concreeete products---*/
 
 class NoProduct extends Product {
     constructor() {
@@ -78,17 +84,28 @@ class Chicken extends Product {
     }
 
     fry() {
-        this.state = 'жареный'
+        this.state =ProductState.fried
         return this
     }
 
     boil() {
-        this.state = 'варёный'
+        this.state = ProductState.boiled
         return this
     }
 
     steam() {
-        this.state = 'тушёный'
+        this.state = ProductState.steamed
+        return this
+    }
+}
+
+class Bread extends Product {
+    constructor() {
+        super('хлеб', '🍞')
+    }
+
+    fry() {
+        this.state = ProductState.fried
         return this
     }
 }
@@ -103,7 +120,7 @@ class Egg extends Product {
     }
 
     boil() {
-        this.state = 'варёный'
+        this.state = ProductState.boiled
         return this
     }
 }
@@ -113,6 +130,8 @@ class Omelete extends Product {
         super('яишница', '🍳')
     }
 }
+
+/*--- Storage ---*/
 
 class TheStorage implements Printable {
     items: Product[]
@@ -188,6 +207,8 @@ class Freezer extends TheStorage {
     }
 }
 
+/*--- Stove ---*/
+
 class Stove {
     fry(obj:Product) {
         return obj.fry()
@@ -201,6 +222,8 @@ class Stove {
         return obj.steam()
     }
 }
+
+/*--- Action ---*/
 
 let chicken = new Chicken()
 let apple = new Apple()
